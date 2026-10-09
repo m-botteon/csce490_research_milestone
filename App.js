@@ -1,5 +1,6 @@
 import {useState} from 'react';
 
+// Square will change value on a click
 function Square({value, onSquareClick}) {
   return (
     <button 
@@ -11,17 +12,28 @@ function Square({value, onSquareClick}) {
   ) 
 }
 
+// End game, reset board to null state
 function ResetGameButton({onReset}) {
   return <button onClick={onReset}>Reset Game</button>;
 }
 
+// Board handles actual gameplay
 export default function Board() {
+  // Player turn
   const [xIsNext, setXIsNext] = useState(true);
+  // Grid squares
   const [squares, setSquares] = useState(Array(9).fill(null));
+
+  // Player Names
+  const [xPlayerName, setXPlayerName] = useState("");
+  const [oPlayerName, setOPlayerName] = useState("");
   
+  // Clear board squares and names
   function handleReset() {
     setSquares(Array(9).fill(null));
     setXIsNext(true);
+    setXPlayerName("");
+    setOPlayerName("");
   }
 
   function handleClick(i) {
@@ -40,15 +52,41 @@ export default function Board() {
   }
 
   const winner = calculateWinner(squares);
+  const isDraw = !winner && squares.every((square) => square !== null);
+
   let status;
   if (winner) {
     status = 'Winner: ' + winner;
+  } else if (isDraw) {
+    status = "Draw";
   } else {
     status = 'Next player: ' + (xIsNext ? 'X' : 'O');
   }
   
   return (
     <>
+      <div>
+        <label>
+          X Player: 
+          <input
+            type="text"
+            value={xPlayerName}
+            onChange={(event) => setXPlayerName(event.target.value)}
+            placeholder="Enter player name"
+          />
+        </label>
+
+        <label>
+          O Player: 
+          <input
+            type="text"
+            value={oPlayerName}
+            onChange={(event) => setOPlayerName(event.target.value)}
+            placeholder="Enter player name"
+          />
+        </label>
+      </div>
+
       <div className="status">{status}</div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
