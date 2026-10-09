@@ -28,13 +28,40 @@ export default function Board() {
   const [xPlayerName, setXPlayerName] = useState("");
   const [oPlayerName, setOPlayerName] = useState("");
   
-  // Clear board squares and names
-  function handleReset() {
-    setSquares(Array(9).fill(null));
-    setXIsNext(true);
-    setXPlayerName("");
-    setOPlayerName("");
+  // Clear board and save results
+  async function handleReset() {
+  // Check game is over
+  if (winner || isDraw) {
+    const result = winner ? winner : "Draw";
+
+    try {
+      const response = await fetch("http://localhost:8080/api/games", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          xPlayerName: xPlayerName,
+          oPlayerName: oPlayerName,
+          result: result,
+        }),
+      });
+
+      // Error catch
+      if (!response.ok) {
+        throw new Error("Could not save game");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   }
+
+  // Reset to default for next game
+  setSquares(Array(9).fill(null));
+  setXIsNext(true);
+  setXPlayerName("");
+  setOPlayerName("");
+}
 
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
