@@ -119,6 +119,7 @@ export default function Board() {
   return (
     <>
       <div>
+        <h1>Tic Tac Toe</h1>
         <label>
           X Player: 
           <input
@@ -156,13 +157,15 @@ export default function Board() {
         <Square value={squares[7]} onSquareClick={() => handleClick(7)} />
         <Square value={squares[8]} onSquareClick={() => handleClick(8)} />
       </div>
-      <div>
+
+      <div className="game-buttons">
         <ResetGameButton onReset={handleReset} />
 
         <button onClick={handleHistoryClick}>
           {showHistory ? "Hide Game History" : "View Game History"}
         </button>
       </div>
+
       {showHistory && (
         <div className="game-history">
           <h3>Game History</h3>
