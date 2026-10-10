@@ -27,41 +27,67 @@ export default function Board() {
   // Player Names
   const [xPlayerName, setXPlayerName] = useState("");
   const [oPlayerName, setOPlayerName] = useState("");
+
+  // Show game history
+  const [games, setGames] = useState([]);
+  const [showHistory, setShowHistory] = useState(false);
   
   // Clear board and save results
   async function handleReset() {
-  // Check game is over
-  if (winner || isDraw) {
-    const result = winner ? winner : "Draw";
+    // Check game is over
+    if (winner || isDraw) {
+      const result = winner ? winner : "Draw";
+
+      try {
+        const response = await fetch("http://localhost:8080/api/games", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            xPlayerName: xPlayerName,
+            oPlayerName: oPlayerName,
+            result: result,
+          }),
+        });
+
+        // Error catch
+        if (!response.ok) {
+          throw new Error("Could not save game");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    // Reset to default for next game
+    setSquares(Array(9).fill(null));
+    setXIsNext(true);
+    setXPlayerName("");
+    setOPlayerName("");
+  }
+
+    // Show game history on button click
+  async function handleHistoryClick() {
+    if (showHistory) {
+      setShowHistory(false);
+      return;
+    }
 
     try {
-      const response = await fetch("http://localhost:8080/api/games", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          xPlayerName: xPlayerName,
-          oPlayerName: oPlayerName,
-          result: result,
-        }),
-      });
+      const response = await fetch("http://localhost:8080/api/games");
 
-      // Error catch
       if (!response.ok) {
-        throw new Error("Could not save game");
+        throw new Error("Could not load game history");
       }
+
+      const savedGames = await response.json();
+      setGames(savedGames);
+      setShowHistory(true);
     } catch (error) {
       console.error(error);
     }
   }
-
-  // Reset to default for next game
-  setSquares(Array(9).fill(null));
-  setXIsNext(true);
-  setXPlayerName("");
-  setOPlayerName("");
-}
 
   function handleClick(i) {
     if (calculateWinner(squares) || squares[i]) {
@@ -132,7 +158,34 @@ export default function Board() {
       </div>
       <div>
         <ResetGameButton onReset={handleReset} />
+
+        <button onClick={handleHistoryClick}>
+          {showHistory ? "Hide Game History" : "View Game History"}
+        </button>
       </div>
+      {showHistory && (
+        <div className="game-history">
+          <h3>Game History</h3>
+
+          {games.length === 0 ? (
+            <p>No completed games saved yet.</p>
+          ) : (
+            <ul>
+              {games.map((game) => (
+                <li key={game.id}>
+                  {game.xPlayerName} (X) vs. {game.oPlayerName} (O) —
+                  {" "}
+                  {game.result === "Draw"
+                    ? "Draw"
+                    : `Winner: ${game.result}`}
+                  {" — "}
+                  {new Date(game.playedAt).toLocaleString()}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
     </>
   );
 }
