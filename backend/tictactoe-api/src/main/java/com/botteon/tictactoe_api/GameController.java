@@ -11,7 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/games")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = {
+    "http://localhost:3000",
+    "https://tictactoe-game-73th.onrender.com"
+})
+
 public class GameController {
 
     private final GameRepository gameRepository;
