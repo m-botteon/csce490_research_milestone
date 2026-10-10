@@ -1,4 +1,5 @@
 import {useState} from 'react';
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:8080";
 
 // Square will change value on a click
 function Square({value, onSquareClick}) {
@@ -39,7 +40,7 @@ export default function Board() {
       const result = winner ? winner : "Draw";
 
       try {
-        const response = await fetch("http://localhost:8080/api/games", {
+        const response = await fetch(`${API_URL}/api/games`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -75,7 +76,7 @@ export default function Board() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/api/games");
+      const response = await fetch(`${API_URL}/api/games`);
 
       if (!response.ok) {
         throw new Error("Could not load game history");
