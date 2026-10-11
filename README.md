@@ -10,17 +10,17 @@ I used Render to deploy the game, which helped me set up the environment variabl
 We are using the npm package manager.
 
 ## File Structure
+```text
 csce490_research_milestone/
-│
 ├── src/                                  # React front-end source files
 │   ├── App.js                            # Game board, player inputs, reset, and history UI
 │   ├── index.js                          # React application entry point
 │   └── styles.css                        # Front-end styling
 │
 ├── public/                               # Static files used by React
+│   └── index.html
 │
 ├── package.json                          # React dependencies and npm scripts
-│   ├── index.html
 │
 ├── backend/
 │   └── tictactoe-api/
@@ -42,3 +42,4 @@ csce490_research_milestone/
 │
 └── package.json
 └── README.md
+```
